@@ -21,31 +21,29 @@
 
 include_recipe 'silverware'
 
-directory File.join(node[:flume][:home_dir], 'plugins') do
-  owner node[:flume][:user]
-  group node[:flume][:user]
+directory File.join(node['flume']['home_dir'], 'plugins') do
+  owner node['flume']['user']
+  group node['flume']['user']
   mode '0755'
 end
 
 cookbook_file '/usr/lib/flume/plugins/hbase-sink.jar' do
-  source 'hbase-sink.jar'
-  owner 'flume'
+  owner node['flume']['user']
+  group node['flume']['user']
   mode '0644'
 end
 
 # Load Attr2HbaseEventSink as a plugin
-node[:flume][:plugins][:hbase_sink] ||= {}
-node[:flume][:plugins][:hbase_sink][:classes] =  ['com.cloudera.flume.hbase.Attr2HBaseEventSink',
+node.set['flume']['plugins']['hbase_sink'] ||= {}
+node.set['flume']['plugins']['hbase_sink']['classes'] =  ['com.cloudera.flume.hbase.Attr2HBaseEventSink',
                                                   'com.cloudera.flume.hbase.HBaseSink']
 
 # Make sure that hbase-sink.jar and hbase-site.xml can be located on the
 # classpath
-node[:flume][:plugins][:hbase_sink][:classpath]  =  ['/usr/lib/flume/plugins/hbase-sink.jar', '/etc/hbase/conf']
+node.set['flume']['plugins']['hbase_sink']['classpath']  =  ['/usr/lib/flume/plugins/hbase-sink.jar', '/etc/hbase/conf']
 
-node[:flume][:plugins][:hbase_sink][:java_opts] =  []
+node.set['flume']['plugins']['hbase_sink']['java_opts'] =  []
 
-node[:flume][:exported_jars] += [
-  "#{node[:flume][:home_dir]}/plugins/hbase-sink.jar"
+node.set['flume']['exported_jars'] += [
+  "#{node['flume']['home_dir']}/plugins/hbase-sink.jar"
 ]
-
-node_changed!

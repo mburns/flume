@@ -32,5 +32,6 @@ volume_dirs('flume.zk.data') { path('flume/data/flume/zk'); selects(:single) }
 volume_dirs('flume.data') { path('flume/data'); selects(:single) }
 
 directory '/usr/lib/flume/plugins' do
-  owner 'flume'
+  owner node['flume']['user']
+  group node['flume']['user']
 end

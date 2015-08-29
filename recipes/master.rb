@@ -30,10 +30,12 @@ end
 # Create service
 #
 runit_service 'flume_master' do
-  run_state node[:flume][:master][:run_state]
+  run_state node['flume']['master']['run_state']
   run_restart false
-  options Mash.new.merge(node[:flume]).merge(node[:flume][:master]).merge(service_command: 'master',
-                                                                          zookeeper_home_dir: node[:zookeeper][:home_dir])
+  options Mash.new.merge(node['flume']).merge(
+    node['flume']['master']).merge(service_command: 'master',
+    zookeeper_home_dir: node['zookeeper']['home_dir']
+  )
 end
 
 #
@@ -41,14 +43,14 @@ end
 #
 
 announce(:flume, :master,     logs: {
-           master: { glob: File.join(node[:flume][:master][:log_dir], 'flume-flume-master*.log'), logrotate: false, archive: false } },
+           master: { glob: File.join(node['flume']['master']['log_dir'], 'flume-flume-master*.log'), logrotate: false, archive: false } },
                               ports: {
                                 status: { port: 35_871, protocol: 'http', dashboard: true },
                                 heartbeat: 35_872,
                                 admin: 35_873,
                                 report: 45_678
                               }.tap do |ports|
-                                ports[:zookeeper] = node[:flume][:zookeeper][:port] unless node[:flume][:master][:external_zookeeper]
+                                ports['zookeeper'] = node['flume']['zookeeper']['port'] unless node['flume']['master']['external_zookeeper']
                               end,
                               daemons: {
                                 java: { name: 'java', cmd: 'FlumeMaster' }

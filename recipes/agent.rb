@@ -30,17 +30,17 @@ end
 # Create service
 #
 runit_service 'flume_agent' do
-  run_state node[:flume][:agent][:run_state]
+  run_state node['flume']['agent']['run_state']
   run_restart false
-  options Mash.new.merge(node[:flume]).merge(node[:flume][:agent]).merge(service_command: 'node',
-                                                                         uopts: node[:flume][:uopts])
+  options Mash.new.merge(node['flume']).merge(node['flume']['agent']).merge(service_command: 'node',
+                                                                         uopts: node['flume']['uopts'])
 end
 
 #
 # Announce flume agent capability
 #
 announce(:flume, :agent,     logs: {
-           node: { glob: File.join(node[:flume][:agent][:log_dir], 'flume-flume-node*.log'), logrotate: false, archive: false } },
+           node: { glob: File.join(node['flume']['agent']['log_dir'], 'flume-flume-node*.log'), logrotate: false, archive: false } },
                              ports: {
                                status: { port: 35_862, protocol: 'http', dashboard: true }  },
                              daemons: {

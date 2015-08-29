@@ -7,7 +7,6 @@ source 'https://supermarket.chef.io'
 metadata
 
 cookbook 'java'
-cookbook 'java'
 cookbook 'maven'
 cookbook 'thrift'
 cookbook 'apt'

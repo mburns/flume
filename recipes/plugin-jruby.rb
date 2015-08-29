@@ -19,35 +19,36 @@
 # limitations under the License.
 #
 
-directory File.join(node[:flume][:home_dir], 'plugins') do
-  owner node[:flume][:user]
-  group node[:flume][:user]
+directory File.join(node['flume']['home_dir'], 'plugins') do
+  owner node['flume']['user']
+  group node['flume']['user']
   mode '0755'
 end
 
-cookbook_file "#{node[:flume][:home_dir]}/plugins/jruby-flume-#{node[:flume][:jars][:jruby_jar_version]}.jar" do
-  source "jruby-flume-#{node[:flume][:jars][:jruby_jar_version]}.jar"
-  owner 'flume'
+cookbook_file "#{node['flume']['home_dir']}/plugins/jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar" do
+  source "jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar"
+  owner node['flume']['user']
+  group node['flume']['user']
   mode '0644'
 end
 
-directory "#{node[:flume][:home_dir]}/scripts" do
-  owner 'flume'
+directory "#{node['flume']['home_dir']}/scripts" do
+  owner node['flume']['user']
+  group node['flume']['user']
   mode '0755'
 end
 
-node[:flume][:plugins][:jruby_flume] ||= {}
-node[:flume][:plugins][:jruby_flume][:classes]    = ['com.infochimps.flume.jruby.JRubySink',
+node.set['flume']['plugins']['jruby_flume'] ||= {}
+node.set['flume']['plugins']['jruby_flume']['classes'] = ['com.infochimps.flume.jruby.JRubySink',
                                                      'com.infochimps.flume.jruby.JRubySource',
                                                      'com.infochimps.flume.jruby.JRubyDecorator',
                                                      'com.infochimps.flume.SQLSink']
-node[:flume][:plugins][:jruby_flume][:classpath]  = ["#{node[:flume][:home_dir]}/plugins/jruby-flume-#{node[:flume][:jars][:jruby_jar_version]}.jar", "#{node[:jruby][:home_dir]}/lib/jruby.jar"]
-node[:flume][:plugins][:jruby_flume][:java_opts]  = ["-Djruby.home=#{node[:jruby][:home_dir]}",
-                                                     "-Djruby.lib=#{node[:jruby][:home_dir]}/lib",
+
+node.set['flume']['plugins']['jruby_flume']['classpath']  = ["#{node['flume']['home_dir']}/plugins/jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar", "#{node['jruby']['home_dir']}/lib/jruby.jar"]
+node.set['flume']['plugins']['jruby_flume']['java_opts']  = ["-Djruby.home=#{node['jruby']['home_dir']}",
+                                                     "-Djruby.lib=#{node['jruby']['home_dir']}/lib",
                                                      '-Djruby.script=jruby']
 
-node[:flume][:exported_jars] += [
-  "#{node[:flume][:home_dir]}/plugins/jruby-flume-#{node[:flume][:jars][:jruby_jar_version]}.jar"
+node.set['flume']['exported_jars'] += [
+  "#{node['flume']['home_dir']}/plugins/jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar"
 ]
-
-node_changed!
