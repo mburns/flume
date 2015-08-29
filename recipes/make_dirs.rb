@@ -26,11 +26,11 @@ include_recipe 'volumes'
 # Install package
 #
 
-volume_dirs('flume.collector.data' ){ path('flume/data/flume/collector') ; selects(:single) }
-volume_dirs('flume.agent.data'     ){ path('flume/data/flume/agent')     ; selects(:single) }
-volume_dirs('flume.zk.data'        ){ path('flume/data/flume/zk')        ; selects(:single) }
-volume_dirs('flume.data'           ){ path('flume/data')                 ; selects(:single) }
+volume_dirs('flume.collector.data') { path('flume/data/flume/collector'); selects(:single) }
+volume_dirs('flume.agent.data') { path('flume/data/flume/agent'); selects(:single) }
+volume_dirs('flume.zk.data') { path('flume/data/flume/zk'); selects(:single) }
+volume_dirs('flume.data') { path('flume/data'); selects(:single) }
 
-directory "/usr/lib/flume/plugins" do
-  owner "flume"
+directory '/usr/lib/flume/plugins' do
+  owner 'flume'
 end

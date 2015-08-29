@@ -26,19 +26,19 @@ include_recipe 'flume::default'
 #
 
 install_from_release(:flume) do
-  release_url   node[:flume][:release_url]
-  version       node[:flume][:version]
-  home_dir      node[:flume][:home_dir]
-  action        :install
+  release_url node[:flume][:release_url]
+  version node[:flume][:version]
+  home_dir node[:flume][:home_dir]
+  action :install
 end
 
-directory(File.dirname(node[:flume][:conf_dir])){ action :create }
+directory(File.dirname(node[:flume][:conf_dir])) { action :create }
 link node[:flume][:conf_dir] do
-  to            File.join(node[:flume][:home_dir], 'conf')
-  action        :create
+  to File.join(node[:flume][:home_dir], 'conf')
+  action :create
 end
 
 file File.join(node[:flume][:prefix_root], 'bin', 'flume') do
-  content       %Q{#!/bin/sh \nexec #{node[:flume][:home_dir]}/bin/flume "$@"\n}
-  mode          '0755'
+  content %(#!/bin/sh \nexec #{node[:flume][:home_dir]}/bin/flume "$@"\n)
+  mode '0755'
 end

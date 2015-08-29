@@ -19,11 +19,11 @@
 # limitations under the License.
 #
 
-flume_logical_node "magic" do
-  source        "console"
-  sink          "console"
-  flow          "test_flow"
+flume_logical_node 'magic' do
+  source 'console'
+  sink 'console'
+  flow 'test_flow'
   physical_node node[:fqdn]
-  flume_master  discover(:flume, :master).private_ip
-  action        [:spawn,:config]
+  flume_master discover(:flume, :master).private_ip
+  action [:spawn, :config]
 end
