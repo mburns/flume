@@ -1,5 +1,0 @@
-default[:nodejs][:git_url]         = "https://github.com/joyent/node.git"
-default[:nodejs][:deploy_version]  = "master"
-default[:nodejs][:jobs] = "2"
-default[:nodejs][:install_dir] = "/usr/src/nodejs"
-default[:nodejs][:bin_path] = "/usr/local/bin/node"

@@ -1,45 +1,114 @@
-# Ironfan-Pantry: Infochimps' Battle-Hardened Collection of Chef Cookbooks
+# flume chef cookbook
 
-Ironfan, the foundation of The Infochimps Platform, is an expressive toolset for constructing scalable, resilient architectures. It works in the cloud, in the data center, and on your laptop, and it makes your system diagram visible and inevitable. Inevitable systems coordinate automatically to interconnect, removing the hassle of manual configuration of connection points (and the associated danger of human error).
-For more information about Ironfan and the Infochimps Platform, visit [infochimps.com](http://www.infochimps.com/).
+Flume: reliable decoupled shipment of logs and data.
 
-This repo holds Infochimps' battle-hardened collection of Chef cookbooks. Some are by us, some are forks, some are dupes. See the CREDITS below.
+* Cookbook source:   [http://github.com/infochimps-cookbooks/flume](http://github.com/infochimps-cookbooks/flume)
+* Ironfan tools: [http://github.com/infochimps-labs/ironfan](http://github.com/infochimps-labs/ironfan)
+* Homebase (shows cookbook in use): [http://github.com/infochimps-labs/ironfan-homebase](http://github.com/infochimps-labs/ironfan-homebase)
 
-## Getting Started
+## Overview
 
-To jump right into using Ironfan, follow our [Installation Instructions](https://github.com/infochimps-labs/ironfan/wiki/INSTALL). For an explanatory tour, check out our [Web Walkthrough](https://github.com/infochimps-labs/ironfan/wiki/walkthrough-web).  Please file all issues on [Ironfan Issues](https://github.com/infochimps-labs/ironfan/issues)
+Cookbook to install flume on a cluster.
 
-## Index
+Use flume::master to set up a master node. Use flume::node to set up a
+physical node. Currently only one physical node per machines. 
 
-ironfan-pantry works together with the full Ironfan toolset:
+Configure logical nodes with the logical_node resource - see the test_flow.rb 
+recipe for an example. This is still somewhat experimental, and some features
+will not work as well as they should until chef version 0.9.14 and others until
+the next release of flume.
+
+Coming soon flume::xxx_plugin.
+
+#### Notes
+
+This recipe relies on cluster_discovery_services to determine which nodes 
+across the cluster act as flume masters, and which nodes provide zookeeper
+servers.
+
+## Recipes 
+
+* `config`                   - Finalizes the config, writes out the config files
+* `default`                  - Base configuration for flume
+* `hbase_sink_plugin`        - Hbase Sink Plugin
+* `jruby_plugin`             - Jruby Plugin
+* `master`                   - Configures Flume Master, installs and starts service
+* `agent`                    - Configures Flume Agent, installs and starts service
+* `test_flow`                - Test Flow
+
+## Integration
+
+Supports platforms: debian and ubuntu
+
+Cookbook dependencies:
+
+* java
+* apt
+* runit
+* volumes
+* silverware
+* hadoop_cluster
 
 
-### Tools:
+## Attributes
 
-* [ironfan-homebase](https://github.com/infochimps-labs/ironfan-homebase): Centralizes the cookbooks, roles and clusters. A solid foundation for any Chef user.
-* [ironfan gem](https://github.com/infochimps-labs/ironfan): The core Ironfan models, and Knife plugins to orchestrate machines and coordinate truth among your homebase, cloud and chef server. 
-* [ironfan-pantry](https://github.com/infochimps-labs/ironfan-pantry): Our collection of industrial-strength, cloud-ready recipes for Hadoop, HBase, Cassandra, Elasticsearch, Zabbix and more. 
-* [silverware cookbook](https://github.com/infochimps-labs/ironfan-pantry/tree/master/cookbooks/silverware): Helps you coordinate discovery of services ("list all the machines for `awesome_webapp`, that I might load balance them") and aspects ("list all components that write logs, that I might logrotate them, or that I might monitor the free space on their volumes"). Found within the [ironfan-pantry](https://github.com/infochimps-labs/ironfan-pantry).
+* `[:flume][:aws_access_key]`         - AWS access key used for writing to s3 buckets
+* `[:flume][:aws_secret_key]`         - AWS secret key used for writing to s3 buckets
+* `[:flume][:cluster_name]`           -  (default: "cluster_name")
+  - The name of the cluster to participate with (masters and zookeepers...)
+* `[:flume][:plugins]`                - Hash for plugin configuration
+  - If you have a particular plugin to configure, you can also configure the classpath and the classes to include in the configuration file with attributes in the following forms:
+    node[:flume][:plugin][{plugin_name}][:classes]
+    node[:flume][:plugin][{plugin_name}][:classpath]
+    node[:flume][:plugin][{plugin_name}][:java_opts]
+* `[:flume][:classes]`                - 
+  - classes to include as plugins
+* `[:flume][:classpath]`              - list of directories and jars to add to the FLUME_CLASSPATH
+* `[:flume][:java_opts]`              - list of command line parameters to add to the jvm
+* `[:flume][:collector]`              - Format of node's logs
+  - output_format -- Controls what format the node writes logs (using collectorSink):
+     * avro - Avro Native file format. Default currently is uncompressed.
+     * avrodata - Binary encoded data written in the avro binary format.
+     * avrojson - JSON encoded data generated by avro.
+     * default - a debugging format.
+     * json - JSON encoded data.
+     * log4j - a log4j pattern similar to that used by CDH output pattern.
+     * raw - Event body only. This is most similar to copying a file but does not preserve any uniqifying metadata like host/timestamp/nanos.
+     * syslog - a syslog like text output format.
+    
+    codec -- Controls what kind of compression the collector will use when writing a file.
+    whether or not collected logs are gzipped before writing
+    them to their final resting place (using collectorSink)
+     * GZipCodec
+     * BZip2Codec
+    
+* `[:flume][:data_dir]`               - Directory for local in-transit files (default: "/data/db/flume")
+* `[:flume][:home_dir]`               -  (default: "/usr/lib/flume")
+* `[:flume][:conf_dir]`               -  (default: "/etc/flume/conf")
+  - default[:flume][:tmp_dir]               = '/mnt/flume/tmp'
+* `[:flume][:log_dir]`                -  (default: "/var/log/flume")
+* `[:flume][:pid_dir]`                -  (default: "/var/run/flume")
+* `[:flume][:master][:external_zookeeper]` - false to use flume's zookeeper. True to attach to an external zookeeper. (default: "false")
+  - By default, flume installs its own zookeeper instance.  With :external_zookeeper to "true", the recipe will work out which machines are in the zookeeper quorum based on cluster membership; modify node[:discovers][:zookeeper_server] to have it use an external cluster
+* `[:flume][:master][:zookeeper_port]` - port to talk to zookeeper on (for external zookeeper) (default: "2181")
+* `[:flume][:master][:run_state]`     -  (default: "stop")
+* `[:flume][:agent][:run_state]`      -  (default: "start")
 
-### Documentation:
+## License and Author
 
-* [index of wiki pages](https://github.com/infochimps-labs/ironfan/wiki/_pages)
-* [ironfan wiki](https://github.com/infochimps-labs/ironfan/wiki): High-level documentation and install instructions.
-* [ironfan issues](https://github.com/infochimps-labs/ironfan/issues): Bugs or questions and feature requests for *any* part of the Ironfan toolset.
-* [ironfan gem docs](http://rdoc.info/gems/ironfan): Rdoc docs for Ironfan.
-* [Ironfan Screen Cast](http://vimeo.com/37279372)-- build a Hadoop cluster from scratch in 20 minutes.
+Author::                Chris Howe - Infochimps, Inc (<coders@infochimps.com>)
+Copyright::             2011, Chris Howe - Infochimps, Inc
 
-**Note**: Ironfan is [not compatible with Ruby 1.8](https://github.com/infochimps-labs/ironfan/issues/127). All versions later than 1.9.2-p136 should work fine.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-## Credits
+    http://www.apache.org/licenses/LICENSE-2.0
 
-* [homebrew cookbook](https://github.com/mathie/chef-homebrew) by @mathie
-* [jenkins cookbook](https://github.com/fnichol/chef-jenkins) by @fnichol
-* [rvm cookbook](https://github.com/fnichol/rvm) by @fnichol
-* [mongodb cookbook](https://github.com/infochimps-cookbooks/mongodb) by @papercavalier (though he doesn't seem to be maintaining it no more)
-* [nfs cookbook](https://github.com/37signals/37s_cookbooks/tree/master/nfs) heavily modified from the @37signals original
-* [cassandra cookbook](https://github.com/b/cookbooks/tree/cassandra/cassandra) modified from @b's original
-* [redis cookbook](https://github.com/b/cookbooks/tree/cassandra/cassandra) heavily modified from @b's original
-* [elasticsearch cookbook](http://community.opscode.com/cookbooks/elasticsearch) heavily modified from GoTime's original
-* [papertrail cookbook](https://github.com/infochimps-cookbooks/papertrail) contributed by Mike Heffner
-* [zabbix cookbook](http://community.opscode.com/cookbooks/zabbix) heavily modified from @laradji's original
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+> readme generated by [ironfan](http://github.com/infochimps-labs/ironfan)'s cookbook_munger

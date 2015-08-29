@@ -1,3 +1,0 @@
-#!/bin/bash
-exec 2>&1
-exec chpst -u www-data php-cgi -b <%= node.zabbix.web.port %> -c /etc/zabbix/php.ini
