@@ -14,10 +14,10 @@ module FlumeCluster
     conn = RightAws::S3Interface.new(node[:aws][:aws_access_key], node[:aws][:aws_secret_access_key], logger: ::Chef::Log)
     url  = conn.get_link(*parse_s3path(path))
     'exec("curl -q #{url}")'
-    rescue RightAws::AwsError => e
-      ::Chef::Log.warn('Error during S3 interfacing')
-      ::Chef::Log.warn e.message
-      'null'
+  rescue RightAws::AwsError => e
+    ::Chef::Log.warn('Error during S3 interfacing')
+    ::Chef::Log.warn e.message
+    'null'
   end
 
   # given: s3://bucket-name/path/to/file => returns: [ "bucket-name", "path/to/file" ]

@@ -40,14 +40,14 @@ end
 
 node.set['flume']['plugins']['jruby_flume'] ||= {}
 node.set['flume']['plugins']['jruby_flume']['classes'] = ['com.infochimps.flume.jruby.JRubySink',
-                                                     'com.infochimps.flume.jruby.JRubySource',
-                                                     'com.infochimps.flume.jruby.JRubyDecorator',
-                                                     'com.infochimps.flume.SQLSink']
+                                                          'com.infochimps.flume.jruby.JRubySource',
+                                                          'com.infochimps.flume.jruby.JRubyDecorator',
+                                                          'com.infochimps.flume.SQLSink']
 
 node.set['flume']['plugins']['jruby_flume']['classpath']  = ["#{node['flume']['home_dir']}/plugins/jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar", "#{node['jruby']['home_dir']}/lib/jruby.jar"]
 node.set['flume']['plugins']['jruby_flume']['java_opts']  = ["-Djruby.home=#{node['jruby']['home_dir']}",
-                                                     "-Djruby.lib=#{node['jruby']['home_dir']}/lib",
-                                                     '-Djruby.script=jruby']
+                                                             "-Djruby.lib=#{node['jruby']['home_dir']}/lib",
+                                                             '-Djruby.script=jruby']
 
 node.set['flume']['exported_jars'] += [
   "#{node['flume']['home_dir']}/plugins/jruby-flume-#{node['flume']['jars']['jruby_jar_version']}.jar"

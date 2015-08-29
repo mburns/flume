@@ -17,7 +17,7 @@ default['flume']['ics_extensions_pom']  = File.join(node['flume']['conf_dir'], '
 default['flume']['version']             = '0.9.5'
 
 default['flume']['agent']['log_dir']    = '/var/log/flume/agent'
-default['flume']['master']['log_dir']    = '/var/log/flume/master'
+default['flume']['master']['log_dir'] = '/var/log/flume/master'
 
 default['flume']['agent']['file_limit'] = 65_536
 default['flume']['master']['file_limit'] = 65_536
@@ -30,8 +30,8 @@ default['users']['flume']['uid']        = 325
 default['groups']['flume']['gid']       = 325
 
 # these are set by the recipes
-node['flume']['exported_jars']          = []
-node['flume']['exported_confs']         = []
+default['flume']['exported_jars']          = []
+default['flume']['exported_confs']         = []
 
 # install_from_git
 default['flume']['deploy_dir']          = '/usr/local/share/flume-git'
@@ -45,7 +45,7 @@ default['flume']['release_url']         = 'https://github.com/downloads/infochim
 #
 
 default['flume']['master']['run_state']   = :stop
-default['flume']['agent']['run_state']   = :start
+default['flume']['agent']['run_state'] = :start
 
 default['flume']['multi_agent']['count']          = 2
 default['flume']['multi_agent']['log_dir_prefix'] = '/var/log/flume'
@@ -57,7 +57,7 @@ default['flume']['multi_agent']['log_dir_prefix'] = '/var/log/flume'
 # By default, flume installs its own zookeeper instance.  With
 # :external_zookeeper to "true", the recipe will work out which machines are in
 # the zookeeper quorum based on cluster membership; modify
-# node[:discovers][:zookeeper_server] to have it use an external cluster
+# node['discovers']['zookeeper_server'] to have it use an external cluster
 default['flume']['master']['external_zookeeper'] = false
 default['flume']['master']['zookeeper_port']     = 2181
 
@@ -67,14 +67,14 @@ default['flume']['zookeeper']['port']            = 3181
 default['flume']['uopts'] = ''
 
 # configuration data for plugins.
-# node['flume'][:plugins][:some_plugin][:classes]    = [ 'java.lang.String' ]
-# node['flume'][:plugins][:some_plugin][:classpath]  = [ "/usr/lib/jruby/jruby.jar" ]
-# node['flume'][:plugins][:some_plugin][:java_opts]  = [ "-Dsomething.special=1" ]
+# node['flume']['plugins']['some_plugin']['classes']    = [ 'java.lang.String' ]
+# node['flume']['plugins']['some_plugin']['classpath']  = [ "/usr/lib/jruby/jruby.jar" ]
+# node['flume']['plugins']['some_plugin']['java_opts']  = [ "-Dsomething.special=1" ]
 default['flume']['plugins'] = {}
 
-default['flume']['jars']['jruby_jar_version']    = '1.0.0'
+default['flume']['jars']['jruby_jar_version'] = '1.0.0'
 
-default['flume']['ics_extensions_version']      = '0.0.2'
+default['flume']['ics_extensions_version'] = '0.0.2'
 
 # classes to include as plugins
 default['flume']['classes'] = []

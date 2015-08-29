@@ -35,14 +35,14 @@ end
 
 # Load Attr2HbaseEventSink as a plugin
 node.set['flume']['plugins']['hbase_sink'] ||= {}
-node.set['flume']['plugins']['hbase_sink']['classes'] =  ['com.cloudera.flume.hbase.Attr2HBaseEventSink',
-                                                  'com.cloudera.flume.hbase.HBaseSink']
+node.set['flume']['plugins']['hbase_sink']['classes'] = ['com.cloudera.flume.hbase.Attr2HBaseEventSink',
+                                                         'com.cloudera.flume.hbase.HBaseSink']
 
 # Make sure that hbase-sink.jar and hbase-site.xml can be located on the
 # classpath
-node.set['flume']['plugins']['hbase_sink']['classpath']  =  ['/usr/lib/flume/plugins/hbase-sink.jar', '/etc/hbase/conf']
+node.set['flume']['plugins']['hbase_sink']['classpath'] = ['/usr/lib/flume/plugins/hbase-sink.jar', '/etc/hbase/conf']
 
-node.set['flume']['plugins']['hbase_sink']['java_opts'] =  []
+node.set['flume']['plugins']['hbase_sink']['java_opts'] = []
 
 node.set['flume']['exported_jars'] += [
   "#{node['flume']['home_dir']}/plugins/hbase-sink.jar"

@@ -38,7 +38,7 @@ end
 action :spawn do
   physical = get_mapping(new_resource.name, new_resource.flume_master)
   Chef::Log.info "Logical node #{new_resource.name} -> #{physical}. Should be #{new_resource.physical_node}"
-  if  physical && physical != new_resource.physical_node
+  if physical && physical != new_resource.physical_node
     execute "unmapping logical node #{new_resource.name}" do
       escaped_command = Shellwords.escape "exec unmap '#{physical}' '#{new_resource.name}'"
       command "timeout 5 flume shell -c #{new_resource.flume_master} -e #{escaped_command} ; true"
