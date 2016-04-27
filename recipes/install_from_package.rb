@@ -26,7 +26,7 @@ include_recipe 'hadoop_cluster::add_cloudera_repo'
 # Install from package
 #
 
-package     'flume'
+package 'flume'
 
 standard_dirs('flume') do
   directories [:home_dir, :conf_dir]

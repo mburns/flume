@@ -26,11 +26,11 @@ include_recipe 'maven'
 # install into eg. /usr/local/share/flume-git
 #
 
-git node[:flume][:deploy_dir] do
-  repository    node[:flume][:deploy_url]
-  revision      "branch-#{node[:flume][:version]}"
-  action        :sync
-  user          'root'
+git node['flume']['deploy_dir'] do
+  repository node['flume']['deploy_url']
+  revision "branch-#{node['flume']['version']}"
+  action :sync
+  user 'root'
 end
 
 #
@@ -38,15 +38,15 @@ end
 #
 
 bash "build flume #{node[:flume][:version]} with maven" do
-  user          'root'
-  cwd           node[:flume][:deploy_dir]
-  code          "mvn package -D skipTests"
-  environment   'THRIFT_HOME' => node[:thrift][:prefix_root]
+  user 'root'
+  cwd node['flume']['deploy_dir']
+  code 'mvn package -D skipTests'
+  environment 'THRIFT_HOME' => node['thrift']['prefix_root']
 end
 
-link node[:flume][:home_dir] do
-  to            File.join(node[:flume][:deploy_dir], "flume-distribution/target/flume-distribution-#{node[:flume][:version]}-SNAPSHOT-bin/flume-#{node[:flume][:version]}-SNAPSHOT")
-  action        :create
+link node['flume']['home_dir'] do
+  to File.join(node['flume']['deploy_dir'], "flume-distribution/target/flume-distribution-#{node['flume']['version']}-SNAPSHOT-bin/flume-#{node['flume']['version']}-SNAPSHOT")
+  action :create
 end
 
 #
@@ -61,15 +61,16 @@ end
 # link in artifacts
 #
 
-directory(File.dirname(node[:flume][:conf_dir])){ action :create }
-link node[:flume][:conf_dir] do
-  to            File.join(node[:flume][:home_dir], 'conf')
-  action        :create
+directory node['flume']['conf_dir']
+
+link node['flume']['conf_dir'] do
+  to File.join(node['flume']['home_dir'], 'conf')
+  action :create
 end
 
-file File.join(node[:flume][:prefix_root], 'bin', 'flume') do
-  content       %Q{#!/bin/sh \nexec #{node[:flume][:home_dir]}/bin/flume "$@"\n}
-  mode          '0755'
+file "#{node['flume']['prefix_root']}/bin/flume" do
+  content %(#!/bin/sh \nexec #{node[:flume][:home_dir]}/bin/flume "$@"\n)
+  mode '0755'
 end
 
 # TODO:

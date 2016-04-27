@@ -20,10 +20,10 @@
 #
 
 include_recipe 'silverware'
-include_recipe 'java' ; complain_if_not_sun_java(:flume)
+include_recipe 'java'; complain_if_not_sun_java(:flume)
 include_recipe 'volumes'
 include_recipe 'thrift'
-class Chef::Resource::Template ; include FlumeCluster ; end
+class Chef::Resource::Template; include FlumeCluster; end
 
 #
 # Common to all install methods
